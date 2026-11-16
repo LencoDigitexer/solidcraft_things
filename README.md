@@ -11,6 +11,11 @@ solidcraft-cli run perfboard/perfboard.json --save perfboard.solidcraft
 
 ## Яндекс Ровер STL Arduino
 
+ТТ Моторы, лидар, держатель телефона, датчики расстояния
+
+<img width="1920" height="1032" alt="image" src="https://github.com/user-attachments/assets/d147938c-1155-4be5-ac13-05b3a16ff412" />
+
+
 ```bash
 solidcraft-cli run rover/rover.json --save rover_chassis.solidcraft
 ```
