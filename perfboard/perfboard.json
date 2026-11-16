@@ -1,0 +1,79 @@
+[
+  {
+    "command": "sketch.create",
+    "params": { "plane": "XY", "name": "BoardSketch" }
+  },
+  {
+    "command": "sketch.rectangle.two_point",
+    "params": { "p0": [0, 0], "p1": [120, 180] }
+  },
+  {
+    "command": "sketch.finish",
+    "params": {}
+  },
+  {
+    "command": "solid.extrude",
+    "params": {
+      "sketch": "BoardSketch",
+      "distance": 0.85,
+      "operation": "new",
+      "body_name": "Board"
+    }
+  },
+  {
+    "command": "solid.hole",
+    "params": { "position": [1.58, 2.37, 0.85], "diameter": 1.0, "targets": ["Board"], "name": "Hole_0" }
+  },
+  {
+    "command": "solid.pattern.rectangular",
+    "params": { "features": ["Hole_0"], "dir1": [1, 0, 0], "count1": 47, "spacing1": 2.54, "dir2": [0, 1, 0], "count2": 10, "spacing2": 2.54 }
+  },
+  {
+    "command": "solid.hole",
+    "params": { "position": [1.58, 27.77, 0.85], "diameter": 1.0, "targets": ["Board"], "name": "Hole_1" }
+  },
+  {
+    "command": "solid.pattern.rectangular",
+    "params": { "features": ["Hole_1"], "dir1": [1, 0, 0], "count1": 47, "spacing1": 2.54, "dir2": [0, 1, 0], "count2": 10, "spacing2": 2.54 }
+  },
+  {
+    "command": "solid.hole",
+    "params": { "position": [1.58, 53.17, 0.85], "diameter": 1.0, "targets": ["Board"], "name": "Hole_2" }
+  },
+  {
+    "command": "solid.pattern.rectangular",
+    "params": { "features": ["Hole_2"], "dir1": [1, 0, 0], "count1": 47, "spacing1": 2.54, "dir2": [0, 1, 0], "count2": 10, "spacing2": 2.54 }
+  },
+  {
+    "command": "solid.hole",
+    "params": { "position": [1.58, 78.57, 0.85], "diameter": 1.0, "targets": ["Board"], "name": "Hole_3" }
+  },
+  {
+    "command": "solid.pattern.rectangular",
+    "params": { "features": ["Hole_3"], "dir1": [1, 0, 0], "count1": 47, "spacing1": 2.54, "dir2": [0, 1, 0], "count2": 10, "spacing2": 2.54 }
+  },
+  {
+    "command": "solid.hole",
+    "params": { "position": [1.58, 103.97, 0.85], "diameter": 1.0, "targets": ["Board"], "name": "Hole_4" }
+  },
+  {
+    "command": "solid.pattern.rectangular",
+    "params": { "features": ["Hole_4"], "dir1": [1, 0, 0], "count1": 47, "spacing1": 2.54, "dir2": [0, 1, 0], "count2": 10, "spacing2": 2.54 }
+  },
+  {
+    "command": "solid.hole",
+    "params": { "position": [1.58, 129.37, 0.85], "diameter": 1.0, "targets": ["Board"], "name": "Hole_5" }
+  },
+  {
+    "command": "solid.pattern.rectangular",
+    "params": { "features": ["Hole_5"], "dir1": [1, 0, 0], "count1": 47, "spacing1": 2.54, "dir2": [0, 1, 0], "count2": 10, "spacing2": 2.54 }
+  },
+  {
+    "command": "solid.hole",
+    "params": { "position": [1.58, 154.77, 0.85], "diameter": 1.0, "targets": ["Board"], "name": "Hole_6" }
+  },
+  {
+    "command": "solid.pattern.rectangular",
+    "params": { "features": ["Hole_6"], "dir1": [1, 0, 0], "count1": 47, "spacing1": 2.54, "dir2": [0, 1, 0], "count2": 10, "spacing2": 2.54 }
+  }
+]
