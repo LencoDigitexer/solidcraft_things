@@ -1,0 +1,696 @@
+{
+  "commands": [
+    {
+      "command": "document.units",
+      "params": {
+        "units": "mm"
+      }
+    },
+    {
+      "command": "parameters.add",
+      "params": {
+        "name": "width",
+        "expression": "1100",
+        "unit": "mm",
+        "comment": "Ширина ворот (1000-1200 мм)"
+      }
+    },
+    {
+      "command": "parameters.add",
+      "params": {
+        "name": "height",
+        "expression": "160",
+        "unit": "mm",
+        "comment": "Высота ворот"
+      }
+    },
+    {
+      "command": "parameters.add",
+      "params": {
+        "name": "depth",
+        "expression": "180",
+        "unit": "mm",
+        "comment": "Глубина ворот"
+      }
+    },
+    {
+      "command": "parameters.add",
+      "params": {
+        "name": "top_depth",
+        "expression": "60",
+        "unit": "mm",
+        "comment": "Верхний вылет боковины"
+      }
+    },
+    {
+      "command": "parameters.add",
+      "params": {
+        "name": "bar",
+        "expression": "20",
+        "unit": "mm",
+        "comment": "Сечение стоек и перекладин (20 +/- 5 мм)"
+      }
+    },
+    {
+      "command": "parameters.add",
+      "params": {
+        "name": "seg_len",
+        "expression": "(width - 2 * bar) / 6",
+        "unit": "mm",
+        "comment": "Шаг одного сегмента перекладины"
+      }
+    },
+    {
+      "command": "parameters.add",
+      "params": {
+        "name": "gap",
+        "expression": "0.2",
+        "unit": "mm",
+        "comment": "Технологический зазор на стыке балок"
+      }
+    },
+    {
+      "command": "parameters.add",
+      "params": {
+        "name": "socket",
+        "expression": "11.4",
+        "unit": "mm",
+        "comment": "Размер квадратного паза"
+      }
+    },
+    {
+      "command": "parameters.add",
+      "params": {
+        "name": "socket_depth",
+        "expression": "11",
+        "unit": "mm",
+        "comment": "Глубина паза"
+      }
+    },
+    {
+      "command": "parameters.add",
+      "params": {
+        "name": "pin",
+        "expression": "11",
+        "unit": "mm",
+        "comment": "Размер сечения соединительной шпонки"
+      }
+    },
+    {
+      "command": "parameters.add",
+      "params": {
+        "name": "pin_len",
+        "expression": "21",
+        "unit": "mm",
+        "comment": "Длина соединительной шпонки"
+      }
+    },
+    {
+      "command": "parameters.add",
+      "params": {
+        "name": "chamfer",
+        "expression": "0.8",
+        "unit": "mm",
+        "comment": "Фаска на углах шпонки для легкой сборки"
+      }
+    },
+    {
+      "command": "construct.plane.offset",
+      "params": {
+        "base": "YZ",
+        "offset": "-width / 2",
+        "name": "LeftFramePlane"
+      }
+    },
+    {
+      "command": "sketch.create",
+      "params": {
+        "plane": "LeftFramePlane",
+        "name": "LeftSideFrameSketch"
+      }
+    },
+    {
+      "command": "sketch.line",
+      "params": {
+        "points": [
+          [0, 0],
+          ["depth", "0 * bar"],
+          ["depth", "bar"],
+          ["top_depth", "height"],
+          ["0 * bar", "height"]
+        ],
+        "closed": true,
+        "infer": true
+      }
+    },
+    {
+      "command": "sketch.line",
+      "params": {
+        "points": [
+          ["bar", "bar"],
+          ["depth - 1.317 * bar", "bar"],
+          ["top_depth - 1.317 * bar + (depth - top_depth) * bar / (height - bar)", "height - bar"],
+          ["bar", "height - bar"]
+        ],
+        "closed": true,
+        "infer": true
+      }
+    },
+    {
+      "command": "sketch.finish",
+      "params": {}
+    },
+    {
+      "command": "solid.extrude",
+      "params": {
+        "sketch": "LeftSideFrameSketch",
+        "distance": "bar",
+        "direction": "positive",
+        "operation": "new",
+        "name": "LeftFrameExtrude",
+        "body_name": "LeftFrame"
+      }
+    },
+    {
+      "command": "construct.plane.offset",
+      "params": {
+        "base": "YZ",
+        "offset": "-width / 2 + bar",
+        "name": "LeftSocketPlane"
+      }
+    },
+    {
+      "command": "sketch.create",
+      "params": {
+        "plane": "LeftSocketPlane",
+        "name": "LeftSocketsSketch"
+      }
+    },
+    {
+      "command": "sketch.rectangle.two_point",
+      "params": {
+        "p0": ["bar / 2 - socket / 2", "height - bar / 2 - socket / 2"],
+        "p1": ["bar / 2 + socket / 2", "height - bar / 2 + socket / 2"]
+      }
+    },
+    {
+      "command": "sketch.rectangle.two_point",
+      "params": {
+        "p0": ["top_depth - bar / 2 - socket / 2", "height - bar / 2 - socket / 2"],
+        "p1": ["top_depth - bar / 2 + socket / 2", "height - bar / 2 + socket / 2"]
+      }
+    },
+    {
+      "command": "sketch.rectangle.two_point",
+      "params": {
+        "p0": ["depth - bar / 2 - socket / 2", "bar / 2 - socket / 2"],
+        "p1": ["depth - bar / 2 + socket / 2", "bar / 2 + socket / 2"]
+      }
+    },
+    {
+      "command": "sketch.finish",
+      "params": {}
+    },
+    {
+      "command": "solid.extrude",
+      "params": {
+        "sketch": "LeftSocketsSketch",
+        "distance": "socket_depth",
+        "direction": "negative",
+        "operation": "cut",
+        "targets": ["LeftFrame"],
+        "name": "LeftSocketsCut"
+      }
+    },
+    {
+      "command": "construct.plane.offset",
+      "params": {
+        "base": "YZ",
+        "offset": "width / 2 - bar",
+        "name": "RightFramePlane"
+      }
+    },
+    {
+      "command": "sketch.create",
+      "params": {
+        "plane": "RightFramePlane",
+        "name": "RightSideFrameSketch"
+      }
+    },
+    {
+      "command": "sketch.line",
+      "params": {
+        "points": [
+          [0, 0],
+          ["depth", "0 * bar"],
+          ["depth", "bar"],
+          ["top_depth", "height"],
+          ["0 * bar", "height"]
+        ],
+        "closed": true,
+        "infer": true
+      }
+    },
+    {
+      "command": "sketch.line",
+      "params": {
+        "points": [
+          ["bar", "bar"],
+          ["depth - 1.317 * bar", "bar"],
+          ["top_depth - 1.317 * bar + (depth - top_depth) * bar / (height - bar)", "height - bar"],
+          ["bar", "height - bar"]
+        ],
+        "closed": true,
+        "infer": true
+      }
+    },
+    {
+      "command": "sketch.finish",
+      "params": {}
+    },
+    {
+      "command": "solid.extrude",
+      "params": {
+        "sketch": "RightSideFrameSketch",
+        "distance": "bar",
+        "direction": "positive",
+        "operation": "new",
+        "name": "RightFrameExtrude",
+        "body_name": "RightFrame"
+      }
+    },
+    {
+      "command": "sketch.create",
+      "params": {
+        "plane": "RightFramePlane",
+        "name": "RightSocketsSketch"
+      }
+    },
+    {
+      "command": "sketch.rectangle.two_point",
+      "params": {
+        "p0": ["bar / 2 - socket / 2", "height - bar / 2 - socket / 2"],
+        "p1": ["bar / 2 + socket / 2", "height - bar / 2 + socket / 2"]
+      }
+    },
+    {
+      "command": "sketch.rectangle.two_point",
+      "params": {
+        "p0": ["top_depth - bar / 2 - socket / 2", "height - bar / 2 - socket / 2"],
+        "p1": ["top_depth - bar / 2 + socket / 2", "height - bar / 2 + socket / 2"]
+      }
+    },
+    {
+      "command": "sketch.rectangle.two_point",
+      "params": {
+        "p0": ["depth - bar / 2 - socket / 2", "bar / 2 - socket / 2"],
+        "p1": ["depth - bar / 2 + socket / 2", "bar / 2 + socket / 2"]
+      }
+    },
+    {
+      "command": "sketch.finish",
+      "params": {}
+    },
+    {
+      "command": "solid.extrude",
+      "params": {
+        "sketch": "RightSocketsSketch",
+        "distance": "socket_depth",
+        "direction": "positive",
+        "operation": "cut",
+        "targets": ["RightFrame"],
+        "name": "RightSocketsCut"
+      }
+    },
+    {
+      "command": "construct.plane.offset",
+      "params": {
+        "base": "YZ",
+        "offset": "-width / 2 + bar + gap / 2",
+        "name": "BarStartPlane"
+      }
+    },
+    {
+      "command": "sketch.create",
+      "params": {
+        "plane": "BarStartPlane",
+        "name": "BarStartSketch"
+      }
+    },
+    {
+      "command": "sketch.rectangle.two_point",
+      "params": {
+        "p0": ["0 * bar", "height - bar"],
+        "p1": ["bar", "height"]
+      }
+    },
+    {
+      "command": "sketch.finish",
+      "params": {}
+    },
+    {
+      "command": "solid.extrude",
+      "params": {
+        "sketch": "BarStartSketch",
+        "distance": "seg_len - gap",
+        "direction": "positive",
+        "operation": "new",
+        "name": "FrontBar1Extrude",
+        "body_name": "FrontBar_1"
+      }
+    },
+    {
+      "command": "sketch.create",
+      "params": {
+        "plane": "BarStartPlane",
+        "name": "BarLeftSocketSketch"
+      }
+    },
+    {
+      "command": "sketch.rectangle.two_point",
+      "params": {
+        "p0": ["bar / 2 - socket / 2", "height - bar / 2 - socket / 2"],
+        "p1": ["bar / 2 + socket / 2", "height - bar / 2 + socket / 2"]
+      }
+    },
+    {
+      "command": "sketch.finish",
+      "params": {}
+    },
+    {
+      "command": "solid.extrude",
+      "params": {
+        "sketch": "BarLeftSocketSketch",
+        "distance": "socket_depth",
+        "direction": "positive",
+        "operation": "cut",
+        "targets": ["FrontBar_1"],
+        "name": "BarLeftSocketCut"
+      }
+    },
+    {
+      "command": "construct.plane.offset",
+      "params": {
+        "base": "YZ",
+        "offset": "-width / 2 + bar + seg_len - gap / 2",
+        "name": "BarRightSocketPlane"
+      }
+    },
+    {
+      "command": "sketch.create",
+      "params": {
+        "plane": "BarRightSocketPlane",
+        "name": "BarRightSocketSketch"
+      }
+    },
+    {
+      "command": "sketch.rectangle.two_point",
+      "params": {
+        "p0": ["bar / 2 - socket / 2", "height - bar / 2 - socket / 2"],
+        "p1": ["bar / 2 + socket / 2", "height - bar / 2 + socket / 2"]
+      }
+    },
+    {
+      "command": "sketch.finish",
+      "params": {}
+    },
+    {
+      "command": "solid.extrude",
+      "params": {
+        "sketch": "BarRightSocketSketch",
+        "distance": "socket_depth",
+        "direction": "negative",
+        "operation": "cut",
+        "targets": ["FrontBar_1"],
+        "name": "BarRightSocketCut"
+      }
+    },
+    {
+      "command": "solid.move",
+      "params": { "bodies": ["FrontBar_1"], "translate": ["seg_len", 0, 0], "copy": true, "body_name": "FrontBar_2" }
+    },
+    {
+      "command": "solid.move",
+      "params": { "bodies": ["FrontBar_1"], "translate": ["2 * seg_len", 0, 0], "copy": true, "body_name": "FrontBar_3" }
+    },
+    {
+      "command": "solid.move",
+      "params": { "bodies": ["FrontBar_1"], "translate": ["3 * seg_len", 0, 0], "copy": true, "body_name": "FrontBar_4" }
+    },
+    {
+      "command": "solid.move",
+      "params": { "bodies": ["FrontBar_1"], "translate": ["4 * seg_len", 0, 0], "copy": true, "body_name": "FrontBar_5" }
+    },
+    {
+      "command": "solid.move",
+      "params": { "bodies": ["FrontBar_1"], "translate": ["5 * seg_len", 0, 0], "copy": true, "body_name": "FrontBar_6" }
+    },
+    {
+      "command": "solid.move",
+      "params": { "bodies": ["FrontBar_1"], "translate": [0, "top_depth - bar", 0], "copy": true, "body_name": "RearTopBar_1" }
+    },
+    {
+      "command": "solid.move",
+      "params": { "bodies": ["FrontBar_1"], "translate": ["seg_len", "top_depth - bar", 0], "copy": true, "body_name": "RearTopBar_2" }
+    },
+    {
+      "command": "solid.move",
+      "params": { "bodies": ["FrontBar_1"], "translate": ["2 * seg_len", "top_depth - bar", 0], "copy": true, "body_name": "RearTopBar_3" }
+    },
+    {
+      "command": "solid.move",
+      "params": { "bodies": ["FrontBar_1"], "translate": ["3 * seg_len", "top_depth - bar", 0], "copy": true, "body_name": "RearTopBar_4" }
+    },
+    {
+      "command": "solid.move",
+      "params": { "bodies": ["FrontBar_1"], "translate": ["4 * seg_len", "top_depth - bar", 0], "copy": true, "body_name": "RearTopBar_5" }
+    },
+    {
+      "command": "solid.move",
+      "params": { "bodies": ["FrontBar_1"], "translate": ["5 * seg_len", "top_depth - bar", 0], "copy": true, "body_name": "RearTopBar_6" }
+    },
+    {
+      "command": "solid.move",
+      "params": { "bodies": ["FrontBar_1"], "translate": [0, "depth - bar", "-(height - bar)"], "copy": true, "body_name": "RearBotBar_1" }
+    },
+    {
+      "command": "solid.move",
+      "params": { "bodies": ["FrontBar_1"], "translate": ["seg_len", "depth - bar", "-(height - bar)"], "copy": true, "body_name": "RearBotBar_2" }
+    },
+    {
+      "command": "solid.move",
+      "params": { "bodies": ["FrontBar_1"], "translate": ["2 * seg_len", "depth - bar", "-(height - bar)"], "copy": true, "body_name": "RearBotBar_3" }
+    },
+    {
+      "command": "solid.move",
+      "params": { "bodies": ["FrontBar_1"], "translate": ["3 * seg_len", "depth - bar", "-(height - bar)"], "copy": true, "body_name": "RearBotBar_4" }
+    },
+    {
+      "command": "solid.move",
+      "params": { "bodies": ["FrontBar_1"], "translate": ["4 * seg_len", "depth - bar", "-(height - bar)"], "copy": true, "body_name": "RearBotBar_5" }
+    },
+    {
+      "command": "solid.move",
+      "params": { "bodies": ["FrontBar_1"], "translate": ["5 * seg_len", "depth - bar", "-(height - bar)"], "copy": true, "body_name": "RearBotBar_6" }
+    },
+    {
+      "command": "sketch.create",
+      "params": {
+        "plane": "LeftSocketPlane",
+        "name": "PinSketch"
+      }
+    },
+    {
+      "command": "sketch.line",
+      "params": {
+        "points": [
+          ["bar / 2 - pin / 2 + chamfer", "height - bar / 2 - pin / 2"],
+          ["bar / 2 + pin / 2 - chamfer", "height - bar / 2 - pin / 2"],
+          ["bar / 2 + pin / 2", "height - bar / 2 - pin / 2 + chamfer"],
+          ["bar / 2 + pin / 2", "height - bar / 2 + pin / 2 - chamfer"],
+          ["bar / 2 + pin / 2 - chamfer", "height - bar / 2 + pin / 2"],
+          ["bar / 2 - pin / 2 + chamfer", "height - bar / 2 + pin / 2"],
+          ["bar / 2 - pin / 2", "height - bar / 2 + pin / 2 - chamfer"],
+          ["bar / 2 - pin / 2", "height - bar / 2 - pin / 2 + chamfer"]
+        ],
+        "closed": true,
+        "infer": true
+      }
+    },
+    {
+      "command": "sketch.finish",
+      "params": {}
+    },
+    {
+      "command": "solid.extrude",
+      "params": {
+        "sketch": "PinSketch",
+        "distance": "pin_len",
+        "direction": "symmetric",
+        "convention": "total_distance",
+        "operation": "new",
+        "name": "PinFront0Extrude",
+        "body_name": "Pin_Front_0"
+      }
+    },
+    {
+      "command": "solid.move",
+      "params": { "bodies": ["Pin_Front_0"], "translate": ["seg_len", 0, 0], "copy": true, "body_name": "Pin_Front_1" }
+    },
+    {
+      "command": "solid.move",
+      "params": { "bodies": ["Pin_Front_0"], "translate": ["2 * seg_len", 0, 0], "copy": true, "body_name": "Pin_Front_2" }
+    },
+    {
+      "command": "solid.move",
+      "params": { "bodies": ["Pin_Front_0"], "translate": ["3 * seg_len", 0, 0], "copy": true, "body_name": "Pin_Front_3" }
+    },
+    {
+      "command": "solid.move",
+      "params": { "bodies": ["Pin_Front_0"], "translate": ["4 * seg_len", 0, 0], "copy": true, "body_name": "Pin_Front_4" }
+    },
+    {
+      "command": "solid.move",
+      "params": { "bodies": ["Pin_Front_0"], "translate": ["5 * seg_len", 0, 0], "copy": true, "body_name": "Pin_Front_5" }
+    },
+    {
+      "command": "solid.move",
+      "params": { "bodies": ["Pin_Front_0"], "translate": ["6 * seg_len", 0, 0], "copy": true, "body_name": "Pin_Front_6" }
+    },
+    {
+      "command": "solid.move",
+      "params": { "bodies": ["Pin_Front_0"], "translate": [0, "top_depth - bar", 0], "copy": true, "body_name": "Pin_RearTop_0" }
+    },
+    {
+      "command": "solid.move",
+      "params": { "bodies": ["Pin_Front_0"], "translate": ["seg_len", "top_depth - bar", 0], "copy": true, "body_name": "Pin_RearTop_1" }
+    },
+    {
+      "command": "solid.move",
+      "params": { "bodies": ["Pin_Front_0"], "translate": ["2 * seg_len", "top_depth - bar", 0], "copy": true, "body_name": "Pin_RearTop_2" }
+    },
+    {
+      "command": "solid.move",
+      "params": { "bodies": ["Pin_Front_0"], "translate": ["3 * seg_len", "top_depth - bar", 0], "copy": true, "body_name": "Pin_RearTop_3" }
+    },
+    {
+      "command": "solid.move",
+      "params": { "bodies": ["Pin_Front_0"], "translate": ["4 * seg_len", "top_depth - bar", 0], "copy": true, "body_name": "Pin_RearTop_4" }
+    },
+    {
+      "command": "solid.move",
+      "params": { "bodies": ["Pin_Front_0"], "translate": ["5 * seg_len", "top_depth - bar", 0], "copy": true, "body_name": "Pin_RearTop_5" }
+    },
+    {
+      "command": "solid.move",
+      "params": { "bodies": ["Pin_Front_0"], "translate": ["6 * seg_len", "top_depth - bar", 0], "copy": true, "body_name": "Pin_RearTop_6" }
+    },
+    {
+      "command": "solid.move",
+      "params": { "bodies": ["Pin_Front_0"], "translate": [0, "depth - bar", "-(height - bar)"], "copy": true, "body_name": "Pin_RearBot_0" }
+    },
+    {
+      "command": "solid.move",
+      "params": { "bodies": ["Pin_Front_0"], "translate": ["seg_len", "depth - bar", "-(height - bar)"], "copy": true, "body_name": "Pin_RearBot_1" }
+    },
+    {
+      "command": "solid.move",
+      "params": { "bodies": ["Pin_Front_0"], "translate": ["2 * seg_len", "depth - bar", "-(height - bar)"], "copy": true, "body_name": "Pin_RearBot_2" }
+    },
+    {
+      "command": "solid.move",
+      "params": { "bodies": ["Pin_Front_0"], "translate": ["3 * seg_len", "depth - bar", "-(height - bar)"], "copy": true, "body_name": "Pin_RearBot_3" }
+    },
+    {
+      "command": "solid.move",
+      "params": { "bodies": ["Pin_Front_0"], "translate": ["4 * seg_len", "depth - bar", "-(height - bar)"], "copy": true, "body_name": "Pin_RearBot_4" }
+    },
+    {
+      "command": "solid.move",
+      "params": { "bodies": ["Pin_Front_0"], "translate": ["5 * seg_len", "depth - bar", "-(height - bar)"], "copy": true, "body_name": "Pin_RearBot_5" }
+    },
+    {
+      "command": "solid.move",
+      "params": { "bodies": ["Pin_Front_0"], "translate": ["6 * seg_len", "depth - bar", "-(height - bar)"], "copy": true, "body_name": "Pin_RearBot_6" }
+    },
+    {
+      "command": "material.assign",
+      "params": {
+        "bodies": [
+          "LeftFrame", "RightFrame",
+          "FrontBar_1", "FrontBar_2", "FrontBar_3", "FrontBar_4", "FrontBar_5", "FrontBar_6",
+          "RearTopBar_1", "RearTopBar_2", "RearTopBar_3", "RearTopBar_4", "RearTopBar_5", "RearTopBar_6",
+          "RearBotBar_1", "RearBotBar_2", "RearBotBar_3", "RearBotBar_4", "RearBotBar_5", "RearBotBar_6",
+          "Pin_Front_0", "Pin_Front_1", "Pin_Front_2", "Pin_Front_3", "Pin_Front_4", "Pin_Front_5", "Pin_Front_6",
+          "Pin_RearTop_0", "Pin_RearTop_1", "Pin_RearTop_2", "Pin_RearTop_3", "Pin_RearTop_4", "Pin_RearTop_5", "Pin_RearTop_6",
+          "Pin_RearBot_0", "Pin_RearBot_1", "Pin_RearBot_2", "Pin_RearBot_3", "Pin_RearBot_4", "Pin_RearBot_5", "Pin_RearBot_6"
+        ],
+        "material": "ABS Plastic"
+      }
+    },
+    {
+      "command": "appearance.assign",
+      "params": {
+        "bodies": [
+          "LeftFrame", "RightFrame",
+          "FrontBar_1", "FrontBar_2", "FrontBar_3", "FrontBar_4", "FrontBar_5", "FrontBar_6",
+          "RearTopBar_1", "RearTopBar_2", "RearTopBar_3", "RearTopBar_4", "RearTopBar_5", "RearTopBar_6",
+          "RearBotBar_1", "RearBotBar_2", "RearBotBar_3", "RearBotBar_4", "RearBotBar_5", "RearBotBar_6"
+        ],
+        "color": "#2563EB"
+      }
+    },
+    {
+      "command": "appearance.assign",
+      "params": {
+        "bodies": [
+          "Pin_Front_0", "Pin_Front_1", "Pin_Front_2", "Pin_Front_3", "Pin_Front_4", "Pin_Front_5", "Pin_Front_6",
+          "Pin_RearTop_0", "Pin_RearTop_1", "Pin_RearTop_2", "Pin_RearTop_3", "Pin_RearTop_4", "Pin_RearTop_5", "Pin_RearTop_6",
+          "Pin_RearBot_0", "Pin_RearBot_1", "Pin_RearBot_2", "Pin_RearBot_3", "Pin_RearBot_4", "Pin_RearBot_5", "Pin_RearBot_6"
+        ],
+        "color": "#1E293B"
+      }
+    },
+    { "command": "body.print_face", "params": { "body": "LeftFrame", "point": [-550, 10, 80] } },
+    { "command": "body.print_face", "params": { "body": "RightFrame", "point": [550, 10, 80] } },
+    { "command": "body.print_face", "params": { "body": "FrontBar_1", "point": [-441.67, 10, 140] } },
+    { "command": "body.print_face", "params": { "body": "FrontBar_2", "point": [-265, 10, 140] } },
+    { "command": "body.print_face", "params": { "body": "FrontBar_3", "point": [-88.33, 10, 140] } },
+    { "command": "body.print_face", "params": { "body": "FrontBar_4", "point": [88.33, 10, 140] } },
+    { "command": "body.print_face", "params": { "body": "FrontBar_5", "point": [265, 10, 140] } },
+    { "command": "body.print_face", "params": { "body": "FrontBar_6", "point": [441.67, 10, 140] } },
+    { "command": "body.print_face", "params": { "body": "RearTopBar_1", "point": [-441.67, 50, 140] } },
+    { "command": "body.print_face", "params": { "body": "RearTopBar_2", "point": [-265, 50, 140] } },
+    { "command": "body.print_face", "params": { "body": "RearTopBar_3", "point": [-88.33, 50, 140] } },
+    { "command": "body.print_face", "params": { "body": "RearTopBar_4", "point": [88.33, 50, 140] } },
+    { "command": "body.print_face", "params": { "body": "RearTopBar_5", "point": [265, 50, 140] } },
+    { "command": "body.print_face", "params": { "body": "RearTopBar_6", "point": [441.67, 50, 140] } },
+    { "command": "body.print_face", "params": { "body": "RearBotBar_1", "point": [-441.67, 170, 0] } },
+    { "command": "body.print_face", "params": { "body": "RearBotBar_2", "point": [-265, 170, 0] } },
+    { "command": "body.print_face", "params": { "body": "RearBotBar_3", "point": [-88.33, 170, 0] } },
+    { "command": "body.print_face", "params": { "body": "RearBotBar_4", "point": [88.33, 170, 0] } },
+    { "command": "body.print_face", "params": { "body": "RearBotBar_5", "point": [265, 170, 0] } },
+    { "command": "body.print_face", "params": { "body": "RearBotBar_6", "point": [441.67, 170, 0] } },
+    { "command": "body.print_face", "params": { "body": "Pin_Front_0", "point": [-530, 10, 144.5] } },
+    { "command": "body.print_face", "params": { "body": "Pin_Front_1", "point": [-353.33, 10, 144.5] } },
+    { "command": "body.print_face", "params": { "body": "Pin_Front_2", "point": [-176.67, 10, 144.5] } },
+    { "command": "body.print_face", "params": { "body": "Pin_Front_3", "point": [0, 10, 144.5] } },
+    { "command": "body.print_face", "params": { "body": "Pin_Front_4", "point": [176.67, 10, 144.5] } },
+    { "command": "body.print_face", "params": { "body": "Pin_Front_5", "point": [353.33, 10, 144.5] } },
+    { "command": "body.print_face", "params": { "body": "Pin_Front_6", "point": [530, 10, 144.5] } },
+    { "command": "body.print_face", "params": { "body": "Pin_RearTop_0", "point": [-530, 50, 144.5] } },
+    { "command": "body.print_face", "params": { "body": "Pin_RearTop_1", "point": [-353.33, 50, 144.5] } },
+    { "command": "body.print_face", "params": { "body": "Pin_RearTop_2", "point": [-176.67, 50, 144.5] } },
+    { "command": "body.print_face", "params": { "body": "Pin_RearTop_3", "point": [0, 50, 144.5] } },
+    { "command": "body.print_face", "params": { "body": "Pin_RearTop_4", "point": [176.67, 50, 144.5] } },
+    { "command": "body.print_face", "params": { "body": "Pin_RearTop_5", "point": [353.33, 50, 144.5] } },
+    { "command": "body.print_face", "params": { "body": "Pin_RearTop_6", "point": [530, 50, 144.5] } },
+    { "command": "body.print_face", "params": { "body": "Pin_RearBot_0", "point": [-530, 170, 4.5] } },
+    { "command": "body.print_face", "params": { "body": "Pin_RearBot_1", "point": [-353.33, 170, 4.5] } },
+    { "command": "body.print_face", "params": { "body": "Pin_RearBot_2", "point": [-176.67, 170, 4.5] } },
+    { "command": "body.print_face", "params": { "body": "Pin_RearBot_3", "point": [0, 170, 4.5] } },
+    { "command": "body.print_face", "params": { "body": "Pin_RearBot_4", "point": [176.67, 170, 4.5] } },
+    { "command": "body.print_face", "params": { "body": "Pin_RearBot_5", "point": [353.33, 170, 4.5] } },
+    { "command": "body.print_face", "params": { "body": "Pin_RearBot_6", "point": [530, 170, 4.5] } }
+  ]
+}

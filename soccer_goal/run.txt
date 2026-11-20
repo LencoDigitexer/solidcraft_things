@@ -1,0 +1,3 @@
+solidcraft-cli run robot_soccer_goal_20mm_modular.json --save robot_soccer_goal_20mm_modular.solidcraft
+
+solidcraft-cli run robot_soccer_goal_15mm_modular.json --save robot_soccer_goal_15mm_modular.solidcraft
